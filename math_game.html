@@ -1,0 +1,136 @@
+DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لعبة الرياضيات للجوال</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 10px;
+            margin: 0;
+            touch-action: manipulation;
+        }
+        .game-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            margin: 10px auto;
+        }
+        .question {
+            font-size: 28px;
+            margin: 25px 0;
+            font-weight: bold;
+        }
+        input {
+            padding: 12px;
+            font-size: 22px;
+            width: 100px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 200px;
+        }
+        .score-level {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .score, .level {
+            font-size: 20px;
+            color: #2E8B57;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        @media (max-width: 400px) {
+            .question { font-size: 24px; }
+            input { font-size: 20px; width: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🧮 لعبة الرياضيات</h1>
+        <div class="score-level">
+            <div class="score">النقاط: <span id="score">0</span></div>
+            <div class="level">المرحلة: <span id="level">1</span></div>
+        </div>
+        <div class="question" id="question">4 + 5</div>
+        <input type="number" id="answer" placeholder="أدخل الإجابة...">
+        <button onclick="checkAnswer()">تحقق!</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentLevel = 1;
+        let num1, num2, correctAnswer;
+        
+        function generateQuestion() {
+            const operations = [
+                { symbol: '+', func: (a, b) => a + b },
+                { symbol: '-', func: (a, b) => a - b },
+                { symbol: '×', func: (a, b) => a * b }
+            ];
+            
+            // زيادة الصعوبة حسب المرحلة
+            const maxNumber = currentLevel * 5 + 5;
+            num1 = Math.floor(Math.random() * maxNumber) + 1;
+            num2 = Math.floor(Math.random() * maxNumber) + 1;
+            
+            const operation = operations[Math.min(currentLevel - 1, operations.length - 1)];
+            correctAnswer = operation.func(num1, num2);
+            
+            document.getElementById('question').textContent = `${num1} ${operation.symbol} ${num2}`;
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+        }
+        
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            
+            if (userAnswer === correctAnswer) {
+                score += currentLevel * 2;
+                document.getElementById('score').textContent = score;
+                
+                if (score >= currentLevel * 10) {
+                    currentLevel++;
+                    document.getElementById('level').textContent = currentLevel;
+                    alert(`🎉 تقدمت للمرحلة ${currentLevel}!`);
+                }
+            } else {
+                alert(`❌ الإجابة الصحيحة: ${correctAnswer}`);
+            }
+            
+            generateQuestion();
+        }
+        
+        // بدء اللعبة
+        generateQuestion();
+        
+        // تفعيل الزر عند الضغط على Enter
+        document.getElementById('answer').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
